@@ -60,12 +60,15 @@ func _process(d):
 	#shoulda made left and right separately??
 	if Input.is_action_just_pressed("ui_left"):
 		isLeft = true
-		anim.flip_h = false
 	elif Input.is_action_just_pressed("ui_right"):
 		isLeft = false
-		anim.flip_h = true
+		
 	if is_on_floor():
 		if direction_h:
+			if direction_h < 0:
+				anim.flip_h = false
+			else:
+				anim.flip_h = true
 			anim.play("walk")
 		else:
 			anim.play("idle")
