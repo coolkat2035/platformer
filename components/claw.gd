@@ -71,7 +71,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 	
 func move(target:Vector2):
-	print("goal: ", goal, "vel: ", velocity)
+	#print("goal: ", goal, "vel: ", velocity)
 	velocity = global_position.direction_to(target)*SHOOT_SPEED
 	
 func retrn(target:Vector2):

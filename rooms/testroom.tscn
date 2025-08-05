@@ -22,8 +22,8 @@ physics_layer_0/collision_layer = 1
 sources/1 = SubResource("TileSetAtlasSource_heske")
 
 [sub_resource type="Curve" id="Curve_0oq46"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.354167, 0.134832), 0.0, 0.0, 0, 0, Vector2(0.744792, 0.820225), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
-point_count = 4
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 2.20524, 0.0, 0, 0]
+point_count = 2
 
 [node name="testroom" type="Node2D"]
 script = ExtResource("1_0oq46")

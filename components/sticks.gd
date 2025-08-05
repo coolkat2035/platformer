@@ -13,6 +13,7 @@ var direction_v:float = 0 #up is negative
 var direction_h:float = 0
 @onready var anim: AnimatedSprite2D = $anim
 
+const CLAW_TIME = 0.4 #time to shoot to max dist!!!!!!!!!!!!!!!!!1
 @onready var claw: CharacterBody2D = $claw
 @onready var arm_left: Marker2D = $armLeft
 @onready var arm_right: Marker2D = $armRight
@@ -20,6 +21,7 @@ signal shoot_claw(location, isLeft)
 signal retract_claw()
 enum ClawStates {READY, SHOOT, FLYING, LAND,HANGING, MISS, RETURN}
 @export var claw_state := ClawStates.READY
+var claw_timer:=0.0
 @export var ARM_LENGTH = 400
 @export var SHOOT_SPEED = 2000
 @export var RETURN_SPEED = 4000
@@ -146,6 +148,7 @@ func shoot():
 		#claw.connect("claw_return", _on_claw_claw_return)
 		#claw.connect("claw_hanging", _on_claw_claw_hanging)
 		
+		claw_timer = 0
 		claw.set_visible(true)
 		claw_state = ClawStates.FLYING
 		claw.global_position = origin.global_position
@@ -162,7 +165,7 @@ func shoot():
 		debug_point.visible = true
 		debug_point.global_position = claw.goal
 func retract():
-	print("retract uwu")
+	print("retract")
 	if claw_state != ClawStates.READY:
 		#if claw_state == ClawStates.HANGING:
 			#print("drop")
@@ -175,12 +178,17 @@ func pull(delta):
 	#only pull if no x button and state is landed
 	#pull to wall
 	if claw_state == ClawStates.LAND:
+		print("pulling")
+		claw_timer += delta/CLAW_TIME
+		#claw_timer = clamp(claw_timer, 0, CLAW_TIME)
+		#need a way to jus tweak the curve and max time to control timing :(
 		if _is_near(position, claw.goal,50):
 			print("hanging on the wall/floor")
 			claw_state = ClawStates.HANGING
 		else:
 			velocity = position.direction_to(claw.global_position)*SHOOT_SPEED
-			velocity *= curve.sample(delta)
+			velocity *= curve.sample(claw_timer)
+			print(claw_timer, curve.sample(claw_timer), velocity)
 
 func hang():
 	if claw_state == ClawStates.HANGING:
