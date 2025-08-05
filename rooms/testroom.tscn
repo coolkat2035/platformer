@@ -22,7 +22,7 @@ physics_layer_0/collision_layer = 1
 sources/1 = SubResource("TileSetAtlasSource_heske")
 
 [sub_resource type="Curve" id="Curve_0oq46"]
-_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(1, 1), 2.20524, 0.0, 0, 0]
+_data = [Vector2(0, 0.191011), 0.0, 2.98704, 0, 1, Vector2(0.270833, 1), 2.98704, 0.0, 1, 0]
 point_count = 2
 
 [node name="testroom" type="Node2D"]
@@ -46,7 +46,7 @@ tile_set = SubResource("TileSet_480xm")
 
 [node name="sticks" parent="." instance=ExtResource("1_gxvrf")]
 position = Vector2(163, 370)
-curve = SubResource("Curve_0oq46")
+claw_speed_curve = SubResource("Curve_0oq46")
 
 [node name="clawstate" type="Label" parent="sticks"]
 z_index = 10

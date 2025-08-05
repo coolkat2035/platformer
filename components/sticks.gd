@@ -1,19 +1,21 @@
 extends CharacterBody2D
 
-@export var curve: Curve
+@export var claw_speed_curve: Curve
+
 
 ## how to limit 
 const GRAVITY = Vector2(0,3500)
-const SPEED = 500.0
-const JUMP_VELOCITY = -1300.0
-const TERM_VEL = 2000
+@export var SPEED = 500.0
+@export var JUMP_VELOCITY = -1300.0
+@export var TERM_VEL = 2000
 var isLeft = true
 #detect up or down with direction v
 var direction_v:float = 0 #up is negative
 var direction_h:float = 0
 @onready var anim: AnimatedSprite2D = $anim
 
-const CLAW_TIME = 2 #time to shoot to max dist!!!!!!!!!!!!!!!!!1
+const CLAW_TIME = 2#time to shoot to max dist!!!!!!!!!!!!!!!!!1
+var arm_origin: Marker2D
 @onready var claw: CharacterBody2D = $claw
 @onready var arm_left: Marker2D = $armLeft
 @onready var arm_right: Marker2D = $armRight
@@ -22,10 +24,12 @@ signal retract_claw()
 enum ClawStates {READY, SHOOT, FLYING, LAND,HANGING, MISS, RETURN}
 @export var claw_state := ClawStates.READY
 var claw_timer:=0.0
-@export var ARM_LENGTH = 400
-@export var SHOOT_SPEED = 2000
+@export var ARM_LENGTH = 600
+var ARM_LENGTH_DIAGONAL = ARM_LENGTH/sqrt(2)
+@export var SHOOT_SPEED = 3700
 @export var RETURN_SPEED = 4000
 
+var THRES=SHOOT_SPEED*0.01 
 #determine if can shoot (unused
 const CLAW_CD = 0.1
 var claw_coolover = true
@@ -36,20 +40,28 @@ var claw_pause_over = true
 
 @onready var c_right: RayCast2D = $claws/cRight
 @onready var c_right_2: RayCast2D = $claws/cRight2
+@onready var c_right_3: RayCast2D = $claws/cRight3
 @onready var c_down: RayCast2D = $claws/cDown
 @onready var c_down_2: RayCast2D = $claws/cDown2
+@onready var c_down_3: RayCast2D = $claws/cDown3
 @onready var c_down_right: RayCast2D = $claws/cDownRight
 @onready var c_down_right_2: RayCast2D = $claws/cDownRight2
+@onready var c_down_right_3: RayCast2D = $claws/cDownRight3
 @onready var c_up_right: RayCast2D = $claws/cUpRight
 @onready var c_up_right_2: RayCast2D = $claws/cUpRight2
+@onready var c_up_right_3: RayCast2D = $claws/cUpRight3
 @onready var c_up_left: RayCast2D = $claws/cUpLeft
 @onready var c_up_left_2: RayCast2D = $claws/cUpLeft2
+@onready var c_up_left_3: RayCast2D = $claws/cUpLeft3
 @onready var c_down_left: RayCast2D = $claws/cDownLeft
 @onready var c_down_left_2: RayCast2D = $claws/cDownLeft2
+@onready var c_down_left_3: RayCast2D = $claws/cDownLeft3
 @onready var c_left: RayCast2D = $claws/cLeft
 @onready var c_left_2: RayCast2D = $claws/cLeft2
+@onready var c_left_3: RayCast2D = $claws/cLeft3
 @onready var c_up: RayCast2D = $claws/cUp
 @onready var c_up_2: RayCast2D = $claws/cUp2
+@onready var c_up_3: RayCast2D = $claws/cUp3
 
 
 @onready var debug_point: Sprite2D = $debugPoint
@@ -62,10 +74,37 @@ func _ready() -> void:
 	claw.top_level = true
 	debug_point.z_index = 999
 	#arms
-	#c_left.target_position = Vector2(-ARM_LENGTH,0)
-	#c_right.target_position = Vector2(ARM_LENGTH,0)
-	#c_up.target_position = Vector2(0,-ARM_LENGTH)
-	#c_down.target_position = Vector2(0,ARM_LENGTH)
+	c_left.target_position = Vector2(-ARM_LENGTH,0)
+	c_left_2.target_position = Vector2(-ARM_LENGTH,0)
+	c_left_3.target_position = Vector2(-ARM_LENGTH,0)
+
+	c_right.target_position = Vector2(ARM_LENGTH,0)
+	c_right_2.target_position = Vector2(ARM_LENGTH,0)
+	c_right_3.target_position = Vector2(ARM_LENGTH,0)
+
+	c_up.target_position = Vector2(0,-ARM_LENGTH)
+	c_up_2.target_position = Vector2(0,-ARM_LENGTH)
+	c_up_3.target_position = Vector2(0,-ARM_LENGTH)
+	
+	c_down.target_position = Vector2(0,ARM_LENGTH)
+	c_down_2.target_position = Vector2(0,ARM_LENGTH)
+	c_down_3.target_position = Vector2(0,ARM_LENGTH)
+
+	c_up_left.target_position = Vector2(-ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
+	c_up_left_2.target_position = Vector2(-ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
+	c_up_left_3.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
+
+	c_up_right.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
+	c_up_right_2.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
+	c_up_right_3.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
+
+	c_down_left.target_position = Vector2(-ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
+	c_down_left_2.target_position = Vector2(-ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
+	c_down_left_3.target_position = Vector2(-ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
+
+	c_down_right.target_position = Vector2(ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
+	c_down_right_2.target_position = Vector2(ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
+	c_down_right_3.target_position = Vector2(ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
 	
 func _process(d):
 	#handle anims
@@ -103,8 +142,8 @@ func shoot():
 	if claw_state == ClawStates.READY:
 		anim.play("shoot")
 		
-		var origin := arm_left if isLeft else arm_right
-		#print(origin.position, origin.global_position)
+		arm_origin = arm_left if isLeft else arm_right
+		#print(arm_origin.position, arm_origin.global_position)
 		
 		#choose where to shoot at
 		var ray_dir : Array[RayCast2D] = []
@@ -113,23 +152,23 @@ func shoot():
 			#up or down first
 			if direction_v <0:
 				if direction_h < 0:
-					ray_dir = [c_up_left, c_up_left_2]
+					ray_dir = [c_up_left, c_up_left_2, c_up_left_3]
 				elif direction_h == 0:
 					ray_dir = [c_up, c_up_2]
 				else:
-					ray_dir = [c_up_right, c_up_right_2]
+					ray_dir = [c_up_right, c_up_right_2, c_up_right_3]
 			else:
 				if direction_h < 0:
-					ray_dir = [c_down_left, c_down_left_2]
+					ray_dir = [c_down_left, c_down_left_2, c_down_left_3]
 				elif direction_h == 0:
-					ray_dir = [c_down, c_down_2]
+					ray_dir = [c_down, c_down_2, c_down_3]
 				else:
-					ray_dir = [c_down_right, c_down_right_2]
+					ray_dir = [c_down_right, c_down_right_2, c_down_right_3]
 		else:
 			if isLeft:
-				ray_dir = [c_left, c_left_2]
+				ray_dir = [c_left, c_left_2, c_left_3]
 			else:
-				ray_dir = [c_right, c_right_2]
+				ray_dir = [c_right, c_right_2, c_right_3]
 				
 		#failsafe!!!!!!!!!!!!!
 		target_ray = ray_dir[0]
@@ -139,10 +178,6 @@ func shoot():
 			if ray.is_colliding():
 				target_ray = ray
 				break
-				
-		if target_ray.is_colliding() and _is_near(target_ray.get_collision_point(),origin.global_position,60):
-			print("too close")
-			return
 			
 		#claw.connect("claw_ready", _on_claw_claw_ready)
 		#claw.connect("claw_return", _on_claw_claw_return)
@@ -151,7 +186,7 @@ func shoot():
 		claw_timer = 0
 		claw.set_visible(true)
 		claw_state = ClawStates.FLYING
-		claw.global_position = origin.global_position
+		claw.global_position = arm_origin.global_position
 		claw.z_index = 2
 		
 		if target_ray.is_colliding():
@@ -181,14 +216,16 @@ func pull(delta):
 		print("pulling")
 		claw_timer += delta/CLAW_TIME
 		#claw_timer = clamp(claw_timer, 0, CLAW_TIME)
-		#need a way to jus tweak the curve and max time to control timing :(
-		if _is_near(position, claw.goal,50):
+		#need a way to jus tweak the claw_speed_curve and max time to control timing :(
+		if _is_near(position, claw.goal,THRES):
+			#print("This never happenes btw")
+			print("owowwowoow ",position, "goal: ", claw.goal)
 			print("hanging on the wall/floor")
 			claw_state = ClawStates.HANGING
 		else:
 			velocity = position.direction_to(claw.global_position)*SHOOT_SPEED
-			velocity *= curve.sample(claw_timer)
-			print(claw_timer, curve.sample(claw_timer), velocity)
+			velocity *= claw_speed_curve.sample(claw_timer)
+			#print(claw_timer, claw_speed_curve.sample(claw_timer), velocity)
 
 func hang():
 	if claw_state == ClawStates.HANGING:
@@ -242,6 +279,7 @@ func _on_claw_claw_return() -> void:
 
 func _on_claw_claw_hanging() -> void:
 	print("hanging on wall")
+	position = claw.global_position
 	claw_state = ClawStates.HANGING
 func _on_claw_claw_ready() -> void:
 	print("ready")

@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-const THRES:=30 #for distance
+var THRES:=30 #for distance
 var SHOOT_SPEED  #0.4 seconds longest ( var ARM_LENGTH = 400
 var RETURN_SPEED
 var CLAW_LINGER = 0.2 #linger time of the claw
@@ -17,19 +17,21 @@ func _ready():
 		#
 	#else:
 		#sprite.set_flip_h(true)
+	
 	sprite.set_flip_h(true)
 	SHOOT_SPEED = player.SHOOT_SPEED
 	RETURN_SPEED = player.RETURN_SPEED
+	THRES = SHOOT_SPEED*0.01
 	
 signal claw_return
 signal claw_ready
 signal claw_hanging
 
 func _physics_process(delta: float) -> void:
-	
 	#Hit something or miss
 	if _is_near(global_position, goal, THRES) and player.claw_state == player.ClawStates.FLYING:
-		##print("reach goal, returning")
+		position = goal
+		look_at(goal)
 		if player.catch_land:
 			##print("land!")
 			player.claw_state = player.ClawStates.LAND
@@ -38,18 +40,15 @@ func _physics_process(delta: float) -> void:
 		#player.claw_state = player.ClawStates.RETURN
 
 	if _is_near(global_position, player.global_position, THRES):
+		#when its near player
 		match (player.claw_state):
 			player.ClawStates.READY:
 				velocity = Vector2.ZERO
 			player.ClawStates.RETURN:
 				#print("reached player!!!")
 				claw_ready.emit()
-				#player.claw_state = player.ClawStates.READY
 				set_visible(false)
 				velocity = Vector2.ZERO
-			player.ClawStates.LAND:
-				#print("hanging on the wall/floor")
-				claw_hanging.emit()
 			
 	match (player.claw_state):
 		player.ClawStates.FLYING:
@@ -61,10 +60,9 @@ func _physics_process(delta: float) -> void:
 			velocity = Vector2.ZERO
 			get_tree().create_timer(CLAW_LINGER).timeout.connect(_on_linger_timeout)
 			#print("empty :(")
-		player.ClawStates.LAND:
+		player.ClawStates.LAND, player.ClawStates.HANGING:
 			#after landing, press x to hold retracting
 			velocity = Vector2.ZERO
-			##print("land... hmm how to retract arm?")
 			
 			#player.claw_state = player.ClawStates.RETURN
 		
