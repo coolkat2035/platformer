@@ -13,7 +13,7 @@ var direction_v:float = 0 #up is negative
 var direction_h:float = 0
 @onready var anim: AnimatedSprite2D = $anim
 
-const CLAW_TIME = 0.4 #time to shoot to max dist!!!!!!!!!!!!!!!!!1
+const CLAW_TIME = 2 #time to shoot to max dist!!!!!!!!!!!!!!!!!1
 @onready var claw: CharacterBody2D = $claw
 @onready var arm_left: Marker2D = $armLeft
 @onready var arm_right: Marker2D = $armRight

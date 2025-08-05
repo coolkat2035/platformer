@@ -29,9 +29,9 @@ func _physics_process(delta: float) -> void:
 	
 	#Hit something or miss
 	if _is_near(global_position, goal, THRES) and player.claw_state == player.ClawStates.FLYING:
-		print("reach goal, returning")
+		##print("reach goal, returning")
 		if player.catch_land:
-			print("land!")
+			##print("land!")
 			player.claw_state = player.ClawStates.LAND
 		else:
 			player.claw_state = player.ClawStates.MISS #coupling bruh
@@ -42,13 +42,13 @@ func _physics_process(delta: float) -> void:
 			player.ClawStates.READY:
 				velocity = Vector2.ZERO
 			player.ClawStates.RETURN:
-				print("reached player!!!")
+				#print("reached player!!!")
 				claw_ready.emit()
 				#player.claw_state = player.ClawStates.READY
 				set_visible(false)
 				velocity = Vector2.ZERO
 			player.ClawStates.LAND:
-				print("hanging on the wall/floor")
+				#print("hanging on the wall/floor")
 				claw_hanging.emit()
 			
 	match (player.claw_state):
@@ -60,25 +60,25 @@ func _physics_process(delta: float) -> void:
 		player.ClawStates.MISS:
 			velocity = Vector2.ZERO
 			get_tree().create_timer(CLAW_LINGER).timeout.connect(_on_linger_timeout)
-			print("empty :(")
+			#print("empty :(")
 		player.ClawStates.LAND:
 			#after landing, press x to hold retracting
 			velocity = Vector2.ZERO
-			#print("land... hmm how to retract arm?")
+			##print("land... hmm how to retract arm?")
 			
 			#player.claw_state = player.ClawStates.RETURN
 		
 	move_and_slide()
 	
 func move(target:Vector2):
-	#print("goal: ", goal, "vel: ", velocity)
+	##print("goal: ", goal, "vel: ", velocity)
 	velocity = global_position.direction_to(target)*SHOOT_SPEED
 	
 func retrn(target:Vector2):
 	velocity = global_position.direction_to(target)*RETURN_SPEED
 
 func _on_linger_timeout():
-	print("returning after miss")
+	#print("returning after miss")
 	claw_return.emit()
 
 func _is_near(pos1:Vector2, pos2:Vector2, thres:int) -> bool:
