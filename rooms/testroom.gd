@@ -2,7 +2,7 @@ extends Node2D
 
 @onready var sticks: CharacterBody2D = $sticks
 @onready var claw: CharacterBody2D = $claw #????????????????????????
-@onready var clawstate: Label = $clawstate
+@onready var clawstate: Label = $sticks/clawstate
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:

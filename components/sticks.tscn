@@ -169,28 +169,70 @@ position = Vector2(-11, 0)
 [node name="armLeft" type="Marker2D" parent="."]
 position = Vector2(9, 0)
 
-[node name="cRight" type="RayCast2D" parent="."]
+[node name="claws" type="Node2D" parent="."]
+
+[node name="cRight" type="RayCast2D" parent="claws"]
+position = Vector2(0, -10)
 target_position = Vector2(400, 0)
 
-[node name="cDown" type="RayCast2D" parent="."]
+[node name="cRight2" type="RayCast2D" parent="claws"]
+position = Vector2(0, 10)
+target_position = Vector2(400, 0)
+
+[node name="cDown" type="RayCast2D" parent="claws"]
+position = Vector2(10, 0)
 target_position = Vector2(0, 400)
 
-[node name="cDownRight" type="RayCast2D" parent="."]
+[node name="cDown2" type="RayCast2D" parent="claws"]
+position = Vector2(-10, 0)
+target_position = Vector2(0, 400)
+
+[node name="cDownRight" type="RayCast2D" parent="claws"]
+position = Vector2(10, -10)
 target_position = Vector2(283, 283)
 
-[node name="cUpRight" type="RayCast2D" parent="."]
+[node name="cDownRight2" type="RayCast2D" parent="claws"]
+position = Vector2(-10, 10)
+target_position = Vector2(283, 283)
+
+[node name="cUpRight" type="RayCast2D" parent="claws"]
+position = Vector2(-10, -10)
 target_position = Vector2(283, -283)
 
-[node name="cUpLeft" type="RayCast2D" parent="."]
+[node name="cUpRight2" type="RayCast2D" parent="claws"]
+position = Vector2(10, 10)
+target_position = Vector2(283, -283)
+
+[node name="cUpLeft" type="RayCast2D" parent="claws"]
+position = Vector2(10, -10)
 target_position = Vector2(-283, -283)
 
-[node name="cDownLeft" type="RayCast2D" parent="."]
+[node name="cUpLeft2" type="RayCast2D" parent="claws"]
+position = Vector2(-10, 10)
+target_position = Vector2(-283, -283)
+
+[node name="cDownLeft" type="RayCast2D" parent="claws"]
+position = Vector2(-10, -10)
 target_position = Vector2(-283, 283)
 
-[node name="cLeft" type="RayCast2D" parent="."]
+[node name="cDownLeft2" type="RayCast2D" parent="claws"]
+position = Vector2(10, 10)
+target_position = Vector2(-283, 283)
+
+[node name="cLeft" type="RayCast2D" parent="claws"]
+position = Vector2(0, -10)
 target_position = Vector2(-400, 0)
 
-[node name="cUp" type="RayCast2D" parent="."]
+[node name="cLeft2" type="RayCast2D" parent="claws"]
+position = Vector2(0, 10)
+target_position = Vector2(-400, 0)
+
+[node name="cUp" type="RayCast2D" parent="claws"]
+position = Vector2(10, 0)
+target_position = Vector2(0, -400)
+
+[node name="cUp2" type="RayCast2D" parent="claws"]
+position = Vector2(-10, 0)
 target_position = Vector2(0, -400)
 
 [node name="debugPoint" type="Sprite2D" parent="."]

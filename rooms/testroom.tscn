@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=4 uid="uid://dkv6u2gfs3foh"]
+[gd_scene load_steps=8 format=4 uid="uid://dkv6u2gfs3foh"]
 
 [ext_resource type="Script" uid="uid://blmemp0n5dd7w" path="res://rooms/testroom.gd" id="1_0oq46"]
 [ext_resource type="PackedScene" uid="uid://dc358le4iqqwc" path="res://components/sticks.tscn" id="1_gxvrf"]
@@ -21,6 +21,10 @@ tile_size = Vector2i(32, 32)
 physics_layer_0/collision_layer = 1
 sources/1 = SubResource("TileSetAtlasSource_heske")
 
+[sub_resource type="Curve" id="Curve_0oq46"]
+_data = [Vector2(0, 0), 0.0, 0.0, 0, 0, Vector2(0.354167, 0.134832), 0.0, 0.0, 0, 0, Vector2(0.744792, 0.820225), 0.0, 0.0, 0, 0, Vector2(1, 1), 0.0, 0.0, 0, 0]
+point_count = 4
+
 [node name="testroom" type="Node2D"]
 script = ExtResource("1_0oq46")
 metadata/_edit_vertical_guides_ = [4572.0]
@@ -42,15 +46,18 @@ tile_set = SubResource("TileSet_480xm")
 
 [node name="sticks" parent="." instance=ExtResource("1_gxvrf")]
 position = Vector2(163, 370)
+curve = SubResource("Curve_0oq46")
 
-[node name="Camera2D" type="Camera2D" parent="sticks"]
-
-[node name="clawstate" type="Label" parent="."]
+[node name="clawstate" type="Label" parent="sticks"]
 z_index = 10
-offset_right = 649.0
-offset_bottom = 282.0
+offset_left = -163.0
+offset_top = -370.0
+offset_right = 486.0
+offset_bottom = -88.0
 theme_override_font_sizes/font_size = 55
 text = "sdafasdafsd"
+
+[node name="Camera2D" type="Camera2D" parent="sticks"]
 
 [connection signal="retract_claw" from="sticks" to="." method="_on_sticks_retract_claw"]
 [connection signal="shoot_claw" from="sticks" to="." method="_on_sticks_shoot_claw"]

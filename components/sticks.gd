@@ -1,4 +1,7 @@
 extends CharacterBody2D
+
+@export var curve: Curve
+
 ## how to limit 
 const GRAVITY = Vector2(0,3500)
 const SPEED = 500.0
@@ -29,16 +32,23 @@ var claw_coolover = true
 var yvel_before_fall = 0
 var claw_pause_over = true
 
-@onready var c_left: RayCast2D = $cLeft
-@onready var c_up_left: RayCast2D = $cUpLeft
-@onready var c_down_left: RayCast2D = $cDownLeft
+@onready var c_right: RayCast2D = $claws/cRight
+@onready var c_right_2: RayCast2D = $claws/cRight2
+@onready var c_down: RayCast2D = $claws/cDown
+@onready var c_down_2: RayCast2D = $claws/cDown2
+@onready var c_down_right: RayCast2D = $claws/cDownRight
+@onready var c_down_right_2: RayCast2D = $claws/cDownRight2
+@onready var c_up_right: RayCast2D = $claws/cUpRight
+@onready var c_up_right_2: RayCast2D = $claws/cUpRight2
+@onready var c_up_left: RayCast2D = $claws/cUpLeft
+@onready var c_up_left_2: RayCast2D = $claws/cUpLeft2
+@onready var c_down_left: RayCast2D = $claws/cDownLeft
+@onready var c_down_left_2: RayCast2D = $claws/cDownLeft2
+@onready var c_left: RayCast2D = $claws/cLeft
+@onready var c_left_2: RayCast2D = $claws/cLeft2
+@onready var c_up: RayCast2D = $claws/cUp
+@onready var c_up_2: RayCast2D = $claws/cUp2
 
-@onready var c_right: RayCast2D = $cRight
-@onready var c_up_right: RayCast2D = $cUpRight
-@onready var c_down_right: RayCast2D = $cDownRight
-
-@onready var c_up: RayCast2D = $cUp
-@onready var c_down: RayCast2D = $cDown
 
 @onready var debug_point: Sprite2D = $debugPoint
 
@@ -50,10 +60,10 @@ func _ready() -> void:
 	claw.top_level = true
 	debug_point.z_index = 999
 	#arms
-	c_left.target_position = Vector2(-ARM_LENGTH,0)
-	c_right.target_position = Vector2(ARM_LENGTH,0)
-	c_up.target_position = Vector2(0,-ARM_LENGTH)
-	c_down.target_position = Vector2(0,ARM_LENGTH)
+	#c_left.target_position = Vector2(-ARM_LENGTH,0)
+	#c_right.target_position = Vector2(ARM_LENGTH,0)
+	#c_up.target_position = Vector2(0,-ARM_LENGTH)
+	#c_down.target_position = Vector2(0,ARM_LENGTH)
 	
 func _process(d):
 	#handle anims
@@ -95,30 +105,40 @@ func shoot():
 		#print(origin.position, origin.global_position)
 		
 		#choose where to shoot at
-		var target_ray
+		var ray_dir : Array[RayCast2D] = []
+		var target_ray:RayCast2D
 		if direction_v:
 			#up or down first
 			if direction_v <0:
 				if direction_h < 0:
-					target_ray = c_up_left
+					ray_dir = [c_up_left, c_up_left_2]
 				elif direction_h == 0:
-					target_ray = c_up
+					ray_dir = [c_up, c_up_2]
 				else:
-					target_ray = c_up_right
+					ray_dir = [c_up_right, c_up_right_2]
 			else:
 				if direction_h < 0:
-					target_ray = c_down_left
+					ray_dir = [c_down_left, c_down_left_2]
 				elif direction_h == 0:
-					target_ray = c_down
+					ray_dir = [c_down, c_down_2]
 				else:
-					target_ray = c_down_right
+					ray_dir = [c_down_right, c_down_right_2]
 		else:
 			if isLeft:
-				target_ray = c_left
+				ray_dir = [c_left, c_left_2]
 			else:
-				target_ray = c_right
+				ray_dir = [c_right, c_right_2]
 				
-		if target_ray.is_colliding() and target_ray.get_collision_point().distance_to(position)<50:
+		#failsafe!!!!!!!!!!!!!
+		target_ray = ray_dir[0]
+		for ray in ray_dir:
+			#get the first one
+			#might want to make a middle one as first
+			if ray.is_colliding():
+				target_ray = ray
+				break
+				
+		if target_ray.is_colliding() and _is_near(target_ray.get_collision_point(),origin.global_position,60):
 			print("too close")
 			return
 			
@@ -150,7 +170,7 @@ func retract():
 		#else:
 		claw_state = ClawStates.RETURN
 	#await get_tree().create_timer(CLAW_CD).timeout
-func pull():
+func pull(delta):
 	#pull by the claw to the wall/pull obj
 	#only pull if no x button and state is landed
 	#pull to wall
@@ -159,7 +179,8 @@ func pull():
 			print("hanging on the wall/floor")
 			claw_state = ClawStates.HANGING
 		else:
-			velocity = position.direction_to(claw.global_position)*SHOOT_SPEED*1
+			velocity = position.direction_to(claw.global_position)*SHOOT_SPEED
+			velocity *= curve.sample(delta)
 
 func hang():
 	if claw_state == ClawStates.HANGING:
@@ -198,7 +219,7 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
 		
-	pull()
+	pull(delta)
 	hang()
 	move_and_slide()
 
