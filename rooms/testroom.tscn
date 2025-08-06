@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=4 uid="uid://dkv6u2gfs3foh"]
+[gd_scene load_steps=9 format=4 uid="uid://dkv6u2gfs3foh"]
 
 [ext_resource type="Script" uid="uid://blmemp0n5dd7w" path="res://rooms/testroom.gd" id="1_0oq46"]
 [ext_resource type="PackedScene" uid="uid://dc358le4iqqwc" path="res://components/sticks.tscn" id="1_gxvrf"]
 [ext_resource type="Texture2D" uid="uid://wx1urquidgxw" path="res://assets/pixel.png" id="2_0oq46"]
+[ext_resource type="PackedScene" uid="uid://d0ujqkp02vcn0" path="res://components/camera.tscn" id="4_heske"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_qk4a2"]
 
@@ -57,7 +58,8 @@ offset_bottom = -88.0
 theme_override_font_sizes/font_size = 55
 text = "sdafasdafsd"
 
-[node name="Camera2D" type="Camera2D" parent="sticks"]
+[node name="testCamera" parent="sticks" instance=ExtResource("4_heske")]
+position = Vector2(-163, -370)
 
 [connection signal="retract_claw" from="sticks" to="." method="_on_sticks_retract_claw"]
 [connection signal="shoot_claw" from="sticks" to="." method="_on_sticks_shoot_claw"]
