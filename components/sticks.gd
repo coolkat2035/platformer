@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 @export var claw_speed_curve: Curve
-
+##add a pause before pulling
 
 ## how to limit 
 const GRAVITY = Vector2(0,3500)
@@ -26,8 +26,8 @@ enum ClawStates {READY, SHOOT, FLYING, LAND,HANGING, MISS, RETURN}
 var claw_timer:=0.0
 @export var ARM_LENGTH = 600
 var ARM_LENGTH_DIAGONAL = ARM_LENGTH/sqrt(2)
-@export var SHOOT_SPEED = 3700
-@export var RETURN_SPEED = 4000
+@export var SHOOT_SPEED = 5700
+@export var RETURN_SPEED = 6000
 
 var THRES=SHOOT_SPEED*0.01 
 #determine if can shoot (unused
@@ -92,7 +92,7 @@ func _ready() -> void:
 
 	c_up_left.target_position = Vector2(-ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
 	c_up_left_2.target_position = Vector2(-ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
-	c_up_left_3.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
+	c_up_left_3.target_position = Vector2(-ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
 
 	c_up_right.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
 	c_up_right_2.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
@@ -223,9 +223,13 @@ func pull(delta):
 			print("hanging on the wall/floor")
 			claw_state = ClawStates.HANGING
 		else:
-			velocity = position.direction_to(claw.global_position)*SHOOT_SPEED
-			velocity *= claw_speed_curve.sample(claw_timer)
-			#print(claw_timer, claw_speed_curve.sample(claw_timer), velocity)
+			if not Input.is_action_pressed("hold"):
+				velocity = position.direction_to(claw.global_position)*SHOOT_SPEED
+				velocity *= claw_speed_curve.sample(claw_timer)
+			else:
+				velocity = Vector2.ZERO
+				claw_timer = 0 #?? iino
+			print(claw_timer, claw_speed_curve.sample(claw_timer), velocity)
 
 func hang():
 	if claw_state == ClawStates.HANGING:
