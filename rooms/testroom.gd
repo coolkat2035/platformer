@@ -11,6 +11,8 @@ func _ready() -> void:
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta: float) -> void:
+	if Input.is_action_just_released("exit"):
+		get_tree().quit()
 	clawstate.text = "claw state: "+str(sticks.ClawStates.keys()[sticks.claw_state])+"\n"
 
 	if Input.is_action_just_pressed("test"):
