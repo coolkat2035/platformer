@@ -38,31 +38,8 @@ var claw_coolover = true
 var yvel_before_fall = 0
 var claw_pause_over = true
 
-@onready var c_right: RayCast2D = $claws/cRight
-@onready var c_right_2: RayCast2D = $claws/cRight2
-@onready var c_right_3: RayCast2D = $claws/cRight3
-@onready var c_down: RayCast2D = $claws/cDown
-@onready var c_down_2: RayCast2D = $claws/cDown2
-@onready var c_down_3: RayCast2D = $claws/cDown3
-@onready var c_down_right: RayCast2D = $claws/cDownRight
-@onready var c_down_right_2: RayCast2D = $claws/cDownRight2
-@onready var c_down_right_3: RayCast2D = $claws/cDownRight3
-@onready var c_up_right: RayCast2D = $claws/cUpRight
-@onready var c_up_right_2: RayCast2D = $claws/cUpRight2
-@onready var c_up_right_3: RayCast2D = $claws/cUpRight3
-@onready var c_up_left: RayCast2D = $claws/cUpLeft
-@onready var c_up_left_2: RayCast2D = $claws/cUpLeft2
-@onready var c_up_left_3: RayCast2D = $claws/cUpLeft3
-@onready var c_down_left: RayCast2D = $claws/cDownLeft
-@onready var c_down_left_2: RayCast2D = $claws/cDownLeft2
-@onready var c_down_left_3: RayCast2D = $claws/cDownLeft3
-@onready var c_left: RayCast2D = $claws/cLeft
-@onready var c_left_2: RayCast2D = $claws/cLeft2
-@onready var c_left_3: RayCast2D = $claws/cLeft3
-@onready var c_up: RayCast2D = $claws/cUp
-@onready var c_up_2: RayCast2D = $claws/cUp2
-@onready var c_up_3: RayCast2D = $claws/cUp3
-
+##lmao
+@onready var claws: Node2D = $claws
 
 @onready var debug_point: Sprite2D = $debugPoint
 
@@ -74,37 +51,8 @@ func _ready() -> void:
 	claw.top_level = true
 	debug_point.z_index = 999
 	#arms
-	c_left.target_position = Vector2(-ARM_LENGTH,0)
-	c_left_2.target_position = Vector2(-ARM_LENGTH,0)
-	c_left_3.target_position = Vector2(-ARM_LENGTH,0)
-
-	c_right.target_position = Vector2(ARM_LENGTH,0)
-	c_right_2.target_position = Vector2(ARM_LENGTH,0)
-	c_right_3.target_position = Vector2(ARM_LENGTH,0)
-
-	c_up.target_position = Vector2(0,-ARM_LENGTH)
-	c_up_2.target_position = Vector2(0,-ARM_LENGTH)
-	c_up_3.target_position = Vector2(0,-ARM_LENGTH)
-	
-	c_down.target_position = Vector2(0,ARM_LENGTH)
-	c_down_2.target_position = Vector2(0,ARM_LENGTH)
-	c_down_3.target_position = Vector2(0,ARM_LENGTH)
-
-	c_up_left.target_position = Vector2(-ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
-	c_up_left_2.target_position = Vector2(-ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
-	c_up_left_3.target_position = Vector2(-ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
-
-	c_up_right.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
-	c_up_right_2.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
-	c_up_right_3.target_position = Vector2(ARM_LENGTH_DIAGONAL,-ARM_LENGTH_DIAGONAL)
-
-	c_down_left.target_position = Vector2(-ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
-	c_down_left_2.target_position = Vector2(-ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
-	c_down_left_3.target_position = Vector2(-ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
-
-	c_down_right.target_position = Vector2(ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
-	c_down_right_2.target_position = Vector2(ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
-	c_down_right_3.target_position = Vector2(ARM_LENGTH_DIAGONAL,ARM_LENGTH_DIAGONAL)
+	for c in claws.get_children():
+		c.target_position = Vector2(ARM_LENGTH,0)
 	
 func _process(d):
 	#handle anims
@@ -114,6 +62,36 @@ func _process(d):
 	elif Input.is_action_just_pressed("ui_right"):
 		isLeft = false
 		
+	#determine ray direction
+	if direction_v:
+		#up or down first
+		if direction_v <0:
+			if direction_h < 0:
+				#upleft
+				claws.set_rotation_degrees(180+45)
+			elif direction_h == 0:
+				#up
+				claws.set_rotation_degrees(270)
+			else:
+				#upright
+				claws.set_rotation_degrees(360-45)
+		else:
+			if direction_h < 0:
+				#downleft
+				claws.set_rotation_degrees(90+45)
+			elif direction_h == 0:
+				#down
+				claws.set_rotation_degrees(90)
+			else:
+				#downright
+				claws.set_rotation_degrees(45)
+	else:
+		if isLeft:
+			#left
+			claws.set_rotation_degrees(180)
+		else:
+			#right
+			claws.set_rotation_degrees(0)
 	if is_on_floor():
 		if direction_h:
 			if direction_h < 0:
@@ -146,35 +124,9 @@ func shoot():
 		#print(arm_origin.position, arm_origin.global_position)
 		
 		#choose where to shoot at
-		var ray_dir : Array[RayCast2D] = []
-		var target_ray:RayCast2D
-		if direction_v:
-			#up or down first
-			if direction_v <0:
-				if direction_h < 0:
-					ray_dir = [c_up_left, c_up_left_2, c_up_left_3]
-				elif direction_h == 0:
-					ray_dir = [c_up, c_up_2]
-				else:
-					ray_dir = [c_up_right, c_up_right_2, c_up_right_3]
-			else:
-				if direction_h < 0:
-					ray_dir = [c_down_left, c_down_left_2, c_down_left_3]
-				elif direction_h == 0:
-					ray_dir = [c_down, c_down_2, c_down_3]
-				else:
-					ray_dir = [c_down_right, c_down_right_2, c_down_right_3]
-		else:
-			if isLeft:
-				ray_dir = [c_left, c_left_2, c_left_3]
-			else:
-				ray_dir = [c_right, c_right_2, c_right_3]
-				
-		#failsafe!!!!!!!!!!!!!
-		target_ray = ray_dir[0]
-		for ray in ray_dir:
-			#get the first one
-			#might want to make a middle one as first
+		var target_ray := claws.get_child(0)
+		for ray in claws.get_children():
+			#might want to make a middle one as first in list
 			if ray.is_colliding():
 				target_ray = ray
 				break
@@ -191,9 +143,10 @@ func shoot():
 		
 		if target_ray.is_colliding():
 			claw.goal = target_ray.get_collision_point()
+			print(claw.goal)
 			catch_land = true
 		else:
-			claw.goal = global_position + target_ray.target_position
+			claw.goal = global_position + target_ray.target_position.rotated(claws.rotation)
 			catch_land = false
 			#claw_state = ClawStates.MISS
 		#claw.goal.x += claw.get_node("sprite").texture.get_width()/2
@@ -224,15 +177,21 @@ func pull(delta):
 			claw_state = ClawStates.HANGING
 		else:
 			if not Input.is_action_pressed("hold"):
+				claw_state = ClawStates.LAND
 				velocity = position.direction_to(claw.global_position)*SHOOT_SPEED
 				velocity *= claw_speed_curve.sample(claw_timer)
 			else:
-				velocity = Vector2.ZERO
+				claw_state = ClawStates.HANGING
+				#goto hang()
 				claw_timer = 0 #?? iino
 			print(claw_timer, claw_speed_curve.sample(claw_timer), velocity)
 
 func hang():
+	
 	if claw_state == ClawStates.HANGING:
+		if Input.is_action_just_released("hold"):
+			claw_state = ClawStates.LAND
+			return
 		velocity = Vector2.ZERO
 
 func _physics_process(delta: float) -> void:
