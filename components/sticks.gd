@@ -24,7 +24,7 @@ signal retract_claw()
 enum ClawStates {READY, SHOOT, FLYING, LAND,HANGING, MISS, RETURN}
 @export var claw_state := ClawStates.READY
 var claw_timer:=0.0
-@export var ARM_LENGTH = 400
+@export var ARM_LENGTH = 500
 var ARM_LENGTH_DIAGONAL = ARM_LENGTH/sqrt(2)
 @export var SHOOT_SPEED = 3700
 @export var RETURN_SPEED = 4000

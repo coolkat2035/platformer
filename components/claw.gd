@@ -1,6 +1,6 @@
 extends CharacterBody2D
 
-var THRES:=30 #for distance
+var THRES:=30.0 #for distance
 var SHOOT_SPEED  #0.4 seconds longest ( var ARM_LENGTH = 400
 var RETURN_SPEED
 var CLAW_LINGER = 0.2 #linger time of the claw
