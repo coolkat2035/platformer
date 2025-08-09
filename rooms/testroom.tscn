@@ -31,12 +31,6 @@ script = ExtResource("1_0oq46")
 metadata/_edit_vertical_guides_ = [4572.0]
 metadata/_edit_horizontal_guides_ = [-508.0]
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(163, 370)
-zoom = Vector2(0.645, 0.645)
-limit_left = 0
-limit_top = 0
-
 [node name="level" type="Node" parent="."]
 
 [node name="barrier" type="StaticBody2D" parent="level"]
@@ -55,15 +49,15 @@ tile_set = SubResource("TileSet_480xm")
 position = Vector2(163, 370)
 claw_speed_curve = SubResource("Curve_0oq46")
 
+[node name="testCamera" parent="sticks" instance=ExtResource("4_heske")]
+position = Vector2(-163, -370)
+
 [node name="clawstate" type="Label" parent="."]
 z_index = 10
 offset_right = 649.0
 offset_bottom = 282.0
 theme_override_font_sizes/font_size = 55
 text = "sdafasdafsd"
-
-[node name="testCamera" parent="sticks" instance=ExtResource("4_heske")]
-position = Vector2(-163, -370)
 
 [connection signal="retract_claw" from="sticks" to="." method="_on_sticks_retract_claw"]
 [connection signal="shoot_claw" from="sticks" to="." method="_on_sticks_shoot_claw"]
