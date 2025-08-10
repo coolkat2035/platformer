@@ -1,8 +1,9 @@
-[gd_scene load_steps=8 format=4 uid="uid://dkv6u2gfs3foh"]
+[gd_scene load_steps=9 format=4 uid="uid://dkv6u2gfs3foh"]
 
 [ext_resource type="Script" uid="uid://blmemp0n5dd7w" path="res://rooms/testroom.gd" id="1_0oq46"]
 [ext_resource type="PackedScene" uid="uid://dc358le4iqqwc" path="res://components/sticks.tscn" id="1_gxvrf"]
 [ext_resource type="Texture2D" uid="uid://wx1urquidgxw" path="res://assets/pixel.png" id="2_0oq46"]
+[ext_resource type="PackedScene" uid="uid://d0ujqkp02vcn0" path="res://components/camera.tscn" id="4_heske"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_qk4a2"]
 
@@ -30,12 +31,6 @@ script = ExtResource("1_0oq46")
 metadata/_edit_vertical_guides_ = [4572.0]
 metadata/_edit_horizontal_guides_ = [-508.0]
 
-[node name="Camera2D" type="Camera2D" parent="."]
-position = Vector2(163, 370)
-zoom = Vector2(0.645, 0.645)
-limit_left = 0
-limit_top = 0
-
 [node name="level" type="Node" parent="."]
 
 [node name="barrier" type="StaticBody2D" parent="level"]
@@ -53,6 +48,9 @@ tile_set = SubResource("TileSet_480xm")
 [node name="sticks" parent="." instance=ExtResource("1_gxvrf")]
 position = Vector2(163, 370)
 claw_speed_curve = SubResource("Curve_0oq46")
+
+[node name="testCamera" parent="sticks" instance=ExtResource("4_heske")]
+position = Vector2(-163, -370)
 
 [node name="clawstate" type="Label" parent="."]
 z_index = 10

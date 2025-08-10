@@ -149,7 +149,6 @@ fill_to = Vector2(1, 1)
 [node name="sticks" type="CharacterBody2D"]
 z_index = 1
 script = ExtResource("1_a2bf3")
-ARM_LENGTH = 500
 CLAW_SHOOT_PAUSE = 0.2
 
 [node name="claw" parent="." instance=ExtResource("2_rtt5m")]
