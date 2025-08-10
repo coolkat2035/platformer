@@ -183,6 +183,14 @@ target_position = Vector2(400, 0)
 position = Vector2(0, -10)
 target_position = Vector2(400, 0)
 
+[node name="cRay5" type="RayCast2D" parent="claws"]
+position = Vector2(0, -20)
+target_position = Vector2(400, 0)
+
+[node name="cRay4" type="RayCast2D" parent="claws"]
+position = Vector2(0, 19)
+target_position = Vector2(400, 0)
+
 [node name="debugPoint" type="Sprite2D" parent="."]
 visible = false
 position = Vector2(62, 97)

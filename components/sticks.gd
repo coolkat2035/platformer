@@ -6,7 +6,7 @@ extends CharacterBody2D
 ## how to limit 
 const GRAVITY = Vector2(0,3500)
 @export var SPEED = 500.0
-@export var JUMP_VELOCITY = -1300.0
+@export var JUMP_VELOCITY = -1100.0
 @export var TERM_VEL = 2000
 var isLeft = true
 #detect up or down with direction v
