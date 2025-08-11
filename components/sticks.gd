@@ -4,10 +4,10 @@ extends CharacterBody2D
 ##add a pause before pulling
 
 ## how to limit 
-const GRAVITY = Vector2(0,3500)
+const GRAVITY = Vector2(0,5500)
 @export var SPEED = 500.0
-@export var JUMP_VELOCITY = -1100.0
-@export var TERM_VEL = 2000
+@export var JUMP_VELOCITY = -1500.0
+@export var TERM_VEL = 5000
 var isLeft = true
 #detect up or down with direction v
 var direction_v:float = 0 #up is negative
@@ -24,7 +24,7 @@ signal retract_claw()
 enum ClawStates {READY, SHOOT, FLYING, LAND,HANGING, MISS, RETURN}
 @export var claw_state := ClawStates.READY
 var claw_timer:=0.0
-@export var ARM_LENGTH = 500
+@export var ARM_LENGTH = 600
 var ARM_LENGTH_DIAGONAL = ARM_LENGTH/sqrt(2)
 @export var SHOOT_SPEED = 5700
 @export var RETURN_SPEED = 6000
@@ -38,11 +38,16 @@ var claw_coolover = true
 var yvel_before_fall = 0
 var claw_pause_over = true
 
-##lmao
+#lmao
 @onready var claws: Node2D = $claws
-
 @onready var debug_point: Sprite2D = $debugPoint
 
+##jump buffer
+@export var JUMP_BUFFER_TIME := 0.1
+var jump_buffer := 0.0
+##coyote time
+@export var COYOTE_TIME := 0.1
+var coyote_timer := 0
 
 func _ready() -> void:
 	claw_state = ClawStates.READY
@@ -54,7 +59,7 @@ func _ready() -> void:
 	for c in claws.get_children():
 		c.target_position = Vector2(ARM_LENGTH,0)
 	
-func _process(d):
+func _process(delta):
 	#handle anims
 	#shoulda made left and right separately??
 	if Input.is_action_just_pressed("ui_left"):
@@ -202,9 +207,13 @@ func _physics_process(delta: float) -> void:
 		velocity += GRAVITY * delta
 	if velocity.y > TERM_VEL:
 		velocity.y = TERM_VEL
-	# Handle jump.
-	if Input.is_action_just_pressed("jump") and is_on_floor():
+
+	if Input.is_action_just_pressed("jump"):
+		jump_buffer = JUMP_BUFFER_TIME
+	# consume buffer when grounded
+	if is_on_floor() and jump_buffer > 0.0:
 		velocity.y = JUMP_VELOCITY
+		jump_buffer = 0.0
 	#drop immediately when button released
 	if Input.is_action_just_released("jump") and not is_on_floor() and velocity.y < 0:
 		velocity.y = 0
@@ -226,6 +235,10 @@ func _physics_process(delta: float) -> void:
 		velocity.x = direction_h * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
+
+	# decay jump buffer
+	if jump_buffer > 0.0:
+		jump_buffer -= delta
 		
 	pull(delta)
 	hang()

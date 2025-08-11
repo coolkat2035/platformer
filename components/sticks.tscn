@@ -130,9 +130,8 @@ animations = [{
 "speed": 8.0
 }]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_k60xv"]
-radius = 24.0
-height = 102.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_rtt5m"]
+size = Vector2(32, 94)
 
 [sub_resource type="Gradient" id="Gradient_a2bf3"]
 offsets = PackedFloat32Array(0.987013, 1)
@@ -154,14 +153,13 @@ CLAW_SHOOT_PAUSE = 0.2
 [node name="claw" parent="." instance=ExtResource("2_rtt5m")]
 
 [node name="anim" type="AnimatedSprite2D" parent="."]
-position = Vector2(11, 0)
+position = Vector2(11, -1)
 sprite_frames = SubResource("SpriteFrames_8moox")
 animation = &"jump"
 autoplay = "idle"
 
 [node name="hb" type="CollisionShape2D" parent="."]
-position = Vector2(0, 4)
-shape = SubResource("CapsuleShape2D_k60xv")
+shape = SubResource("RectangleShape2D_rtt5m")
 
 [node name="armRight" type="Marker2D" parent="."]
 position = Vector2(-11, 0)
@@ -182,12 +180,12 @@ target_position = Vector2(400, 0)
 position = Vector2(0, -10)
 target_position = Vector2(400, 0)
 
-[node name="cRay5" type="RayCast2D" parent="claws"]
-position = Vector2(0, -20)
+[node name="cRay4" type="RayCast2D" parent="claws"]
+position = Vector2(0, 18)
 target_position = Vector2(400, 0)
 
-[node name="cRay4" type="RayCast2D" parent="claws"]
-position = Vector2(0, 19)
+[node name="cRay5" type="RayCast2D" parent="claws"]
+position = Vector2(0, -19)
 target_position = Vector2(400, 0)
 
 [node name="debugPoint" type="Sprite2D" parent="."]
