@@ -38,7 +38,7 @@ var claw_coolover = true
 var yvel_before_fall = 0
 var claw_pause_over = true
 
-#lmao
+#now with less claws!
 @onready var claws: Node2D = $claws
 @onready var debug_point: Sprite2D = $debugPoint
 
@@ -47,11 +47,10 @@ var claw_pause_over = true
 var jump_buffer := 0.0
 ##coyote time
 @export var COYOTE_TIME := 0.1
-var coyote_timer := 0
+var coyote_timer := 0.0
 
 func _ready() -> void:
 	claw_state = ClawStates.READY
-
 	debug_point.top_level = true
 	claw.top_level = true
 	debug_point.z_index = 999
@@ -67,6 +66,11 @@ func _process(delta):
 	elif Input.is_action_just_pressed("ui_right"):
 		isLeft = false
 		
+	if jump_buffer > 0:
+		jump_buffer -= delta
+	if coyote_timer > 0:
+		print(coyote_timer)
+		coyote_timer -= delta
 	#determine ray direction
 	if direction_v:
 		#up or down first
@@ -176,7 +180,6 @@ func pull(delta):
 		#claw_timer = clamp(claw_timer, 0, CLAW_TIME)
 		#need a way to jus tweak the claw_speed_curve and max time to control timing :(
 		if _is_near(position, claw.goal,THRES):
-			#print("This never happenes btw")
 			print("owowwowoow ",position, "goal: ", claw.goal)
 			print("hanging on the wall/floor")
 			claw_state = ClawStates.HANGING
@@ -192,7 +195,6 @@ func pull(delta):
 			print(claw_timer, claw_speed_curve.sample(claw_timer), velocity)
 
 func hang():
-	
 	if claw_state == ClawStates.HANGING:
 		if Input.is_action_just_released("hold"):
 			claw_state = ClawStates.LAND
@@ -210,10 +212,12 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("jump"):
 		jump_buffer = JUMP_BUFFER_TIME
-	# consume buffer when grounded
-	if is_on_floor() and jump_buffer > 0.0:
+	
+	# consume buffer when grounded, then jump
+	if (is_on_floor() or coyote_timer > 0) and jump_buffer > 0.0 :
 		velocity.y = JUMP_VELOCITY
 		jump_buffer = 0.0
+		coyote_timer = 0
 	#drop immediately when button released
 	if Input.is_action_just_released("jump") and not is_on_floor() and velocity.y < 0:
 		velocity.y = 0
@@ -235,14 +239,15 @@ func _physics_process(delta: float) -> void:
 		velocity.x = direction_h * SPEED
 	else:
 		velocity.x = move_toward(velocity.x, 0, SPEED)
-
-	# decay jump buffer
-	if jump_buffer > 0.0:
-		jump_buffer -= delta
 		
 	pull(delta)
 	hang()
+	
+	var was_on_floor = is_on_floor()
 	move_and_slide()
+	
+	if was_on_floor and not is_on_floor() and velocity.y > 0:
+		coyote_timer = COYOTE_TIME
 
 func _on_clawShootPause_timeout()->void:
 	claw_pause_over = true
