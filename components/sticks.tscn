@@ -174,26 +174,31 @@ position = Vector2(9, 0)
 [node name="cRay" type="RayCast2D" parent="claws"]
 target_position = Vector2(400, 0)
 collision_mask = 2
+hit_from_inside = true
 
 [node name="cRay2" type="RayCast2D" parent="claws"]
 position = Vector2(0, 10)
 target_position = Vector2(400, 0)
 collision_mask = 2
+hit_from_inside = true
 
 [node name="cRay3" type="RayCast2D" parent="claws"]
 position = Vector2(0, -10)
 target_position = Vector2(400, 0)
 collision_mask = 2
+hit_from_inside = true
 
 [node name="cRay4" type="RayCast2D" parent="claws"]
 position = Vector2(0, 18)
 target_position = Vector2(400, 0)
 collision_mask = 2
+hit_from_inside = true
 
 [node name="cRay5" type="RayCast2D" parent="claws"]
 position = Vector2(0, -18)
 target_position = Vector2(400, 0)
 collision_mask = 2
+hit_from_inside = true
 
 [node name="debugPoint" type="Sprite2D" parent="."]
 visible = false
