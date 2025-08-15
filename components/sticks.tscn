@@ -151,6 +151,8 @@ script = ExtResource("1_a2bf3")
 CLAW_SHOOT_PAUSE = 0.2
 
 [node name="claw" parent="." instance=ExtResource("2_rtt5m")]
+collision_layer = 0
+collision_mask = 0
 
 [node name="anim" type="AnimatedSprite2D" parent="."]
 position = Vector2(11, -1)
