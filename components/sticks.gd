@@ -152,7 +152,7 @@ func shoot():
 		
 		if target_ray.is_colliding():
 			claw.goal = target_ray.get_collision_point()
-			print(claw.goal)
+			print(claw.goal, target_ray.get_collider())
 			catch_land = true
 		else:
 			claw.goal = global_position + target_ray.target_position.rotated(claws.rotation)
@@ -180,7 +180,7 @@ func pull(delta):
 		#claw_timer = clamp(claw_timer, 0, CLAW_TIME)
 		#need a way to jus tweak the claw_speed_curve and max time to control timing :(
 		if _is_near(position, claw.goal,THRES):
-			print("owowwowoow ",position, "goal: ", claw.goal)
+			#print("owowwowoow ",position, "goal: ", claw.goal)
 			print("hanging on the wall/floor")
 			claw_state = ClawStates.HANGING
 		else:
